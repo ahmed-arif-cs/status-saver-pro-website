@@ -1,0 +1,53 @@
+// =====================================================================
+//  Status Saver Pro — Prisma schema
+//  Database: PostgreSQL (serverless-friendly for Vercel Postgres / Neon)
+//  Set DATABASE_URL in .env (local) or Vercel env vars (production).
+// =====================================================================
+
+generator client {
+  provider = "prisma-client-js"
+  // Enable binary data-less driver adapter for serverless cold-start friendliness
+  // (optional — works without it, but recommended for Vercel)
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------
+//  Contact form submissions (from /contact and /support pages)
+// ---------------------------------------------------------------------
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  // Honeypot field captured for spam analysis (expected to be empty)
+  honeypot  String?  @default("")
+  // Submission source IP (for rate-limit / abuse review)
+  ip        String?
+  status    String   @default("new") // new | read | archived
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+// ---------------------------------------------------------------------
+//  Bug report submissions (from /support page)
+// ---------------------------------------------------------------------
+model BugReport {
+  id          String   @id @default(cuid())
+  email       String?  // optional — submitter may be anonymous
+  deviceInfo  String?  // optional — Android version, device model
+  description String
+  honeypot    String?  @default("")
+  ip          String?
+  status      String   @default("new") // new | triaged | resolved
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([status])
+}
