@@ -62,7 +62,8 @@ export function SiteHeader() {
           <ThemeToggle />
           <PlayStoreBadge
             variant="primary"
-            className="hidden h-9 !px-3.5 !py-2 !text-meta sm:inline-flex"
+            size="compact"
+            className="hidden sm:inline-flex"
           />
 
           {/* Mobile menu */}
